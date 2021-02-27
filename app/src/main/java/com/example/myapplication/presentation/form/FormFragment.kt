@@ -8,6 +8,8 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.Navigation
+import androidx.navigation.fragment.findNavController
 import com.example.myapplication.R
 import com.example.myapplication.databinding.FragmentFormBinding
 import com.example.myapplication.presentation.data.model.Item
@@ -50,6 +52,10 @@ class FormFragment : Fragment() {
 
                 viewModel.save(item)
             }
+
+            cancelBtn.setOnClickListener {
+                Navigation.findNavController(requireView()).popBackStack()
+            }
         }
 
         return binding.root
@@ -66,7 +72,7 @@ class FormFragment : Fragment() {
 
     private fun subscribe() {
         viewModel._itemLiveData.observe(this) {
-            Log.d("Subcribe", "$it")
+             findNavController().navigate(R.id.action_formFragment_to_listFragment)
         }
     }
 

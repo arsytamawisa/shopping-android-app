@@ -85,6 +85,11 @@
             android:text="SUBMIT"
             android:layout_width="match_parent"
             android:layout_height="match_parent"/>
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/cancel_btn"
+            android:text="CANCEL"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
