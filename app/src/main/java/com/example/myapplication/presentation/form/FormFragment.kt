@@ -84,9 +84,18 @@ class FormFragment : Fragment() {
             }
 
 
-            cancelBtn.setOnClickListener {
-                Navigation.findNavController(requireView()).popBackStack()
+            if (submitBtn.text == "UPDATE") {
+                cancelBtn.setOnClickListener {
+                    Navigation.findNavController(requireView())
+                        .navigate(R.id.action_formFragment_to_listFragment)
+                }
+            } else {
+                cancelBtn.setOnClickListener {
+                    Navigation.findNavController(requireView()).popBackStack()
+                }
             }
+
+
         }
 
         return binding.root

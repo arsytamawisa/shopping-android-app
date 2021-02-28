@@ -27,7 +27,13 @@ class ListViewHolder(view: View, private val itemClickListener: ItemClickListene
 
 
             /* Edit Listener */
-            cardItem.setOnClickListener {
+//            cardItem.setOnClickListener {
+//                itemClickListener.onEdit(item
+//            }
+
+
+            /* Edit Listener */
+            updateBtn.setOnClickListener {
                 itemClickListener.onEdit(item)
             }
         }
