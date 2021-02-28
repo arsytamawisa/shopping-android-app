@@ -11,7 +11,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.latihanframgent.list.ListViewAdapter
 import com.example.myapplication.databinding.FragmentListBinding
-import com.example.myapplication.presentation.data.repository.ItemRepository
+import com.example.myapplication.data.repository.ItemRepository
 
 
 class ListFragment : Fragment() {
@@ -51,8 +51,12 @@ class ListFragment : Fragment() {
     }
 
     private fun subscribe() {
-        viewModel.itemsLiveData.observe(this) {
+        viewModel.liveDataItems.observe(this) {
             rvAdapter.setData(it)
+        }
+
+        viewModel.liveDataItem.observe(this) {
+            Log.d("GET ITEM", "$it")
         }
     }
 

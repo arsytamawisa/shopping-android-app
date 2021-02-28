@@ -1,11 +1,10 @@
 package com.example.myapplication.presentation.form
 
-import android.content.ClipData
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.example.myapplication.presentation.data.model.Item
-import com.example.myapplication.presentation.data.repository.ItemRepository
+import com.example.myapplication.data.model.Item
+import com.example.myapplication.data.repository.ItemRepository
 
 class FormViewModel(val repository: ItemRepository) : ViewModel() {
 

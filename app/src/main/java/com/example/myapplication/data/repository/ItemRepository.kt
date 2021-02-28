@@ -1,6 +1,6 @@
-package com.example.myapplication.presentation.data.repository
+package com.example.myapplication.data.repository
 
-import com.example.myapplication.presentation.data.model.Item
+import com.example.myapplication.data.model.Item
 import java.util.*
 
 class ItemRepository : ItemRepositoryInterface {
@@ -47,5 +47,7 @@ class ItemRepository : ItemRepositoryInterface {
         itemList.removeAt(index)
         return item
     }
+
+    override fun findByItem(item: Item) = itemList.get(itemList.indexOf(item))
 
 }
