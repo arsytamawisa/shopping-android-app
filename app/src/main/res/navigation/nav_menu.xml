@@ -25,6 +25,12 @@
             android:id="@+id/action_formFragment_to_listFragment"
             app:destination="@id/listFragment"
             app:popUpTo="@id/menuFragment" />
+        <argument
+            android:name="edit_item"
+            app:argType="com.example.myapplication.data.model.Item" />
+        <argument
+            android:name="update_action"
+            app:argType="string" />
     </fragment>
     <fragment
         android:id="@+id/listFragment"

@@ -39,6 +39,13 @@ class ItemRepository : ItemRepositoryInterface {
             item.id = UUID.randomUUID().toString()
             itemList.add(item)
         }
+        else {
+            val data = itemList.filter {
+                it.id == item.id
+            }
+            val index = itemList.indexOf(data.single())
+            itemList[index] = item
+        }
         return item
     }
 

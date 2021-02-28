@@ -8,6 +8,7 @@
     tools:context="presentation.form.FormFragment">
 
     <TextView
+        android:id="@+id/title_item"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="ADD ITEM"

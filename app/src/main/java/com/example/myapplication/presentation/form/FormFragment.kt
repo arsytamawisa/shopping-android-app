@@ -3,6 +3,7 @@ package com.example.myapplication.presentation.form
 import android.app.DatePickerDialog
 import android.os.Bundle
 import android.text.InputType
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -23,11 +24,17 @@ import java.util.*
 
 class FormFragment : Fragment() {
 
+    private var item: Item? = null
     private lateinit var binding: FragmentFormBinding
     private lateinit var viewModel: FormViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        arguments?.let {
+            item = it.getParcelable("edit_item")
+        }
+
         initViewModel()
         subscribe()
     }
@@ -38,22 +45,44 @@ class FormFragment : Fragment() {
     ): View? {
         binding = FragmentFormBinding.inflate(layoutInflater)
         binding.apply {
+
+            /* Get Item bundle and inject to form */
+            item?.apply {
+                submitBtn.text = "UPDATE"
+                titleItem.text = "EDIT ITEM"
+                dateEt.editText?.setText(date)
+                nameEt.editText?.setText(name)
+                quantityEt.editText?.setText(quantity.toString())
+                noteEt.editText?.setText(note)
+            }
+
             dateTiet.setDate()
+
             submitBtn.setOnClickListener {
-                if (filterBlank(nameEt, noteEt, dateEt, quantityEt)) {
-                    val item = Item(
+                if (item == null) {
+                    /* Add Item */
+                    item = Item(
+                        id = "",
                         name = nameEt.editText?.text.toString(),
                         note = noteEt.editText?.text.toString(),
-                        quantity = quantityEt.editText?.text.toString().toInt(),
                         date = dateEt.editText?.text.toString(),
-                        id = ""
+                        quantity = quantityEt.editText?.text.toString().toInt()
                     )
-                    viewModel.save(item).successNotification()
                 } else {
-                    failedNotification()
+                    /* Update Item */
+                    item?.let {
+                        item = Item(
+                            id = it.id,
+                            name = nameEt.editText?.text.toString(),
+                            note = noteEt.editText?.text.toString(),
+                            date = dateEt.editText?.text.toString(),
+                            quantity = quantityEt.editText?.text.toString().toInt()
+                        )
+                    }
                 }
-
+                viewModel.save(item!!)
             }
+
 
             cancelBtn.setOnClickListener {
                 Navigation.findNavController(requireView()).popBackStack()

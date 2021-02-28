@@ -14,6 +14,7 @@ class ListViewModel(private val repository: ItemRepositoryInterface): ViewModel(
 
 
     /* Live Data */
+
     val liveDataItems: LiveData<List<Item>>
         get() {
             loadItems()
@@ -28,6 +29,7 @@ class ListViewModel(private val repository: ItemRepositoryInterface): ViewModel(
 
 
     /* Load Data */
+
     private fun loadItems() {
         _itemsLiveData.value = repository.list()
     }
@@ -39,6 +41,7 @@ class ListViewModel(private val repository: ItemRepositoryInterface): ViewModel(
 
 
     /* Listener */
+
     override fun onDelete(item: Item) {
         repository.delete(item)
         loadItems()
