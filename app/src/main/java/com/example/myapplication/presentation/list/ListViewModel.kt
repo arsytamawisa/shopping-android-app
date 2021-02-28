@@ -5,8 +5,9 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.myapplication.presentation.data.model.Item
 import com.example.myapplication.presentation.data.repository.ItemRepositoryInterface
+import com.example.myapplication.presentation.listener.ItemClickListener
 
-class ListViewModel(private val repositoryInterface: ItemRepositoryInterface): ViewModel() {
+class ListViewModel(private val repository: ItemRepositoryInterface): ViewModel(), ItemClickListener {
 
     private var _itemsLiveData = MutableLiveData<List<Item>>()
 
@@ -17,7 +18,12 @@ class ListViewModel(private val repositoryInterface: ItemRepositoryInterface): V
         }
 
     private fun loadItemData() {
-        _itemsLiveData.value = repositoryInterface.list()
+        _itemsLiveData.value = repository.list()
+    }
+
+    override fun onDelete(item: Item) {
+        repository.delete(item)
+        loadItemData()
     }
 
 }

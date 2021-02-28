@@ -2,6 +2,7 @@ package com.example.myapplication.presentation.form
 
 import android.app.DatePickerDialog
 import android.os.Bundle
+import android.os.Message
 import android.text.InputType
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -39,31 +40,8 @@ class FormFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         binding = FragmentFormBinding.inflate(layoutInflater)
-
         binding.apply {
-
-//            dateTiet.inputType = InputType.TYPE_NULL
-//            dateTiet.setOnClickListener {
-//                val calendar = Calendar.getInstance()
-//                val year = calendar.get(Calendar.YEAR)
-//                val month = calendar.get(Calendar.MONTH)
-//                val day = calendar.get(Calendar.DAY_OF_MONTH)
-//                dateTiet.setOnClickListener {
-//                    val datePickerDialog = activity?.let { it1 ->
-//                        DatePickerDialog(
-//                            it1, { view, year, monthOfYear, dayOfMonth ->
-//                                val date = "$dayOfMonth/$monthOfYear/$year"
-//                                dateTiet.setText(date)
-//                            }, year, month, day
-//                        )
-//                    }
-//                    datePickerDialog?.show()
-//                }
-//            }
-
-
             dateTiet.setDate()
-
             submitBtn.setOnClickListener {
                 if (filterBlank(nameEt, noteEt, dateEt, quantityEt)) {
                     val item = Item(
@@ -73,10 +51,9 @@ class FormFragment : Fragment() {
                         date = dateEt.editText?.text.toString(),
                         id = ""
                     )
-                    viewModel.save(item)
-                    pushNotification(true)
+                    viewModel.save(item).successNotification()
                 } else {
-                    pushNotification(false)
+                    failedNotification()
                 }
 
             }
@@ -109,32 +86,31 @@ class FormFragment : Fragment() {
         fun newInstance() = FormFragment()
     }
 
-
-
-
     private fun filterBlank(vararg values: TextInputLayout): Boolean {
         var status = true
         values.forEach { if (it.editText?.text.toString().trim().length == 0) status = false }
         return status
     }
 
-    private fun pushNotification(status: Boolean) {
-        if (status) {
-            Toast.makeText(
-                activity,
-                "Success add new item.",
-                Toast.LENGTH_SHORT
-            ).show()
-        } else {
-            Toast.makeText(
-                activity,
-                "Oops.. sorry please check your input form",
-                Toast.LENGTH_SHORT
-            ).show()
-        }
+    private fun <T> T.successNotification(customMessage: String? = null) {
+        var message = customMessage ?: "Success add new item."
+        Toast.makeText(
+            activity,
+            message,
+            Toast.LENGTH_SHORT
+        ).show()
     }
 
-    private fun TextInputLayout.onlyNumber() : Boolean {
+    private fun <T> T.failedNotification(customMessage: String? = null) {
+        var message = customMessage ?: "Oops.. sorry please check your input form"
+        Toast.makeText(
+            activity,
+            message,
+            Toast.LENGTH_SHORT
+        ).show()
+    }
+
+    private fun TextInputLayout.onlyNumber(): Boolean {
         return "[A-Z0-9<\n]+".toRegex().matches(this.editText?.text.toString())
     }
 

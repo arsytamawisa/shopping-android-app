@@ -32,7 +32,7 @@ class ListFragment : Fragment() {
     ): View? {
         binding = FragmentListBinding.inflate(layoutInflater)
         binding.apply {
-            rvAdapter = ListViewAdapter()
+            rvAdapter = ListViewAdapter(viewModel)
             itemRecyclerView.apply {
                 layoutManager = LinearLayoutManager(requireContext())
                 adapter = rvAdapter

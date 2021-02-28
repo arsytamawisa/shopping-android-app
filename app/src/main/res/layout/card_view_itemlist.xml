@@ -55,7 +55,7 @@
                 android:text="note" />
 
             <Button
-                android:id="@+id/delete_item_button"
+                android:id="@+id/delete_btn"
                 android:text="Delete"
                 android:gravity="center_horizontal"
                 android:layout_width="match_parent"
