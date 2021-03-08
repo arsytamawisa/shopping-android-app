@@ -9,110 +9,162 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.observe
 import androidx.navigation.Navigation
 import androidx.navigation.fragment.findNavController
 import com.example.myapplication.R
-import com.example.myapplication.databinding.FragmentFormBinding
 import com.example.myapplication.data.model.Item
+import com.example.myapplication.data.model.ItemRequest
 import com.example.myapplication.data.repository.ItemRepository
-import com.google.android.material.textfield.TextInputEditText
-import com.google.android.material.textfield.TextInputLayout
+import com.example.myapplication.databinding.FragmentFormBinding
+import com.example.myapplication.form.FormViewModel
+import com.example.myapplication.utils.ResourceStatus
+import com.example.shoppinglist.utils.components.LoadingDialog
 import java.util.*
-
 
 class FormFragment : Fragment() {
 
-    private var item: Item? = null
+    private var itemValue: Item? = null
     private lateinit var binding: FragmentFormBinding
     private lateinit var viewModel: FormViewModel
+    private lateinit var loadingDialog: AlertDialog
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         arguments?.let {
-            item = it.getParcelable("edit_item")
+            itemValue = it.getParcelable<Item>("edit_item")
         }
-
-        initViewModel()
+        initModel()
         subscribe()
+        Log.d("ITEM", "${itemValue}")
     }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        val calendar = Calendar.getInstance()
+        val year = calendar.get(Calendar.YEAR)
+        val month = calendar.get(Calendar.MONTH)
+        val day = calendar.get(Calendar.DAY_OF_MONTH)
+
+        loadingDialog = LoadingDialog.build(requireContext())
         binding = FragmentFormBinding.inflate(layoutInflater)
         binding.apply {
 
-            /* Get Item bundle and inject to form */
-            item?.apply {
+            itemValue?.apply {
                 submitBtn.text = "UPDATE"
                 titleItem.text = "EDIT ITEM"
-                dateEt.editText?.setText(date)
+
+                dateTiet.setText(date)
                 nameEt.editText?.setText(name)
                 quantityEt.editText?.setText(quantity.toString())
                 noteEt.editText?.setText(note)
             }
 
-            dateTiet.setDate()
+            dateTiet.inputType = InputType.TYPE_NULL
+            dateTiet.setOnClickListener(View.OnClickListener {
+                val datePickerDialog = activity?.let { it1 ->
+                    DatePickerDialog(
+                        it1, DatePickerDialog.OnDateSetListener
+                        { view, year, monthOfYear, dayOfMonth ->
+                            val date = "$dayOfMonth/$monthOfYear/$year"
+                            dateTiet.setText(date)
+                        }, year, month, day
+                    )
+                }
+                datePickerDialog?.show()
+            })
 
-            submitBtn.setOnClickListener {
-                if (item == null) {
-                    /* Add Item */
-                    item = Item(
-                        id = "",
-                        name = nameEt.editText?.text.toString(),
+            submitBtn.setOnClickListener{
+                var quantity: Int = if (quantityEt.editText?.text.toString().isNullOrEmpty()) {
+                    0
+                } else {
+                    quantityEt.editText?.text.toString().toInt()
+                }
+
+                if (itemValue == null) {
+                    //add
+                    Log.d("data", "jalan")
+                    itemValue = Item(
                         note = noteEt.editText?.text.toString(),
+                        name = nameEt.editText?.text.toString(),
                         date = dateEt.editText?.text.toString(),
-                        quantity = quantityEt.editText?.text.toString().toInt()
+                        quantity = quantity,
+                        id = 0
                     )
                 } else {
-                    /* Update Item */
-                    item?.let {
-                        item = Item(
-                            id = it.id,
-                            name = nameEt.editText?.text.toString(),
+                    //update
+                    itemValue?.id?.let { it ->
+                        Log.d("btn EDIT", "$it")
+                        itemValue = Item(
                             note = noteEt.editText?.text.toString(),
+                            name = nameEt.editText?.text.toString(),
                             date = dateEt.editText?.text.toString(),
-                            quantity = quantityEt.editText?.text.toString().toInt()
+                            quantity = quantity,
+                            id = it
                         )
+                        Log.d("btn EDIT", "$itemValue")
                     }
                 }
-                viewModel.save(item!!)
+                viewModel.validation(itemValue!!)
             }
 
-
-            if (submitBtn.text == "UPDATE") {
-                cancelBtn.setOnClickListener {
-                    Navigation.findNavController(requireView())
-                        .navigate(R.id.action_formFragment_to_listFragment)
-                }
-            } else {
-                cancelBtn.setOnClickListener {
-                    Navigation.findNavController(requireView()).popBackStack()
-                }
+            cancelBtn.setOnClickListener {
+                Navigation.findNavController(requireView()).popBackStack()
             }
-
-
         }
-
         return binding.root
     }
 
-    private fun initViewModel() {
+    private fun initModel() {
         viewModel = ViewModelProvider(this, object : ViewModelProvider.Factory {
             override fun <T : ViewModel?> create(modelClass: Class<T>): T {
-                val repository = ItemRepository()
-                return FormViewModel(repository) as T
+                val repo =
+                    ItemRepository()
+                return FormViewModel(repo) as T
             }
         }).get(FormViewModel::class.java)
     }
 
     private fun subscribe() {
-        viewModel._itemLiveData.observe(this) {
+        viewModel.itemLiveData.observe(this) {
             findNavController().navigate(R.id.action_formFragment_to_listFragment)
+        }
+
+        viewModel.isValid.observe(this) {
+            when(it.status) {
+                ResourceStatus.FAIL -> {
+                    loadingDialog.hide()
+                    Toast.makeText(
+                        requireContext(),
+                        it.message,
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+                ResourceStatus.LOADING -> {
+                    loadingDialog.show()
+                }
+                ResourceStatus.SUCCESS -> {
+                    val request = itemValue?.id?.let { it1 ->
+                        ItemRequest(
+                            name = binding.nameEt.editText?.text.toString(),
+                            date = binding.dateTiet.text.toString(),
+                            note = binding.noteEt.editText?.text.toString(),
+                            quantity = binding.quantityEt.editText?.text.toString().toInt(),
+                            id = it1
+                        )
+                    }
+
+                    if (request != null) {
+                        viewModel.addData(request)
+                    }
+                    loadingDialog.hide()
+                }
+            }
         }
     }
 
@@ -120,55 +172,4 @@ class FormFragment : Fragment() {
         @JvmStatic
         fun newInstance() = FormFragment()
     }
-
-    private fun filterBlank(vararg values: TextInputLayout): Boolean {
-        var status = true
-        values.forEach { if (it.editText?.text.toString().trim().length == 0) status = false }
-        return status
-    }
-
-    private fun <T> T.successNotification(customMessage: String? = null) {
-        var message = customMessage ?: "Success add new item."
-        Toast.makeText(
-            activity,
-            message,
-            Toast.LENGTH_SHORT
-        ).show()
-    }
-
-    private fun <T> T.failedNotification(customMessage: String? = null) {
-        var message = customMessage ?: "Oops.. sorry please check your input form"
-        Toast.makeText(
-            activity,
-            message,
-            Toast.LENGTH_SHORT
-        ).show()
-    }
-
-    private fun TextInputLayout.onlyNumber(): Boolean {
-        return "[A-Z0-9<\n]+".toRegex().matches(this.editText?.text.toString())
-    }
-
-    private fun TextInputEditText.setDate() {
-        this.inputType = InputType.TYPE_NULL
-        this.setOnClickListener {
-            val calendar = Calendar.getInstance()
-            val year = calendar.get(Calendar.YEAR)
-            val month = calendar.get(Calendar.MONTH)
-            val day = calendar.get(Calendar.DAY_OF_MONTH)
-            this.setOnClickListener {
-                val datePickerDialog = activity?.let { it1 ->
-                    DatePickerDialog(
-                        it1, { view, year, monthOfYear, dayOfMonth ->
-                            val date = "$dayOfMonth/$monthOfYear/$year"
-                            this.setText(date)
-                        }, year, month, day
-                    )
-                }
-                datePickerDialog?.show()
-            }
-        }
-    }
 }
-
-

@@ -2,34 +2,39 @@ package com.example.myapplication.data.model
 
 import android.os.Parcel
 import android.os.Parcelable
+import com.google.gson.annotations.SerializedName
 
-data class Item(
-    var id: String,
-    var date: String,
-    var name: String,
-    var quantity: Int,
-    var note: String
-) : Parcelable {
+data class Item (
+
+    @SerializedName("id")
+    val id: Int = 0,
+    @SerializedName("name")
+    val name: String? = null,
+    @SerializedName("date")
+    val date: String? = null,
+    @SerializedName("note")
+    val note: String? = null,
+    @SerializedName("quantity")
+    val quantity: Int = 0
+): Parcelable {
     constructor(parcel: Parcel) : this(
-        parcel.readString()!!,
-        parcel.readString()!!,
-        parcel.readString()!!,
         parcel.readInt()!!,
-        parcel.readString()!!
-    )
-
+        parcel.readString()!!,
+        parcel.readString()!!,
+        parcel.readString()!!,
+        parcel.readInt()!!
+    ) {
+    }
 
     override fun describeContents() = 0
 
-
     override fun writeToParcel(p0: Parcel?, p1: Int) {
-        p0?.writeString(id)
-        p0?.writeString(date)
+        p0?.writeInt(id)
         p0?.writeString(name)
-        p0?.writeInt(quantity)
+        p0?.writeString(date)
         p0?.writeString(note)
+        p0?.writeInt(quantity)
     }
-
 
     companion object CREATOR : Parcelable.Creator<Item> {
         override fun createFromParcel(parcel: Parcel): Item {

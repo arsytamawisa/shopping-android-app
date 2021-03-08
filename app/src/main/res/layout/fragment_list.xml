@@ -3,13 +3,87 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="presentation.list.ListFragment">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".list.ListFragment">
 
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/item_recycler_view"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:weightSum="10">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recycler_view_item"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="10dp"
+            android:layout_weight="9" />
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_marginBottom="20dp"
+            android:layout_height="wrap_content">
+
+<!--            <com.google.android.material.button.MaterialButton-->
+<!--                android:id="@+id/prev_btn"-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:backgroundTint="@color/yellow"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:drawableTop="@drawable/ic_baseline_chevron_left_24"-->
+<!--                app:layout_constraintEnd_toStartOf="@+id/page_text"-->
+<!--                tools:ignore="MissingConstraints"-->
+<!--                tools:layout_editor_absoluteY="0dp" />-->
+
+<!--            <TextView-->
+<!--                android:id="@+id/page_text"-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="47dp"-->
+<!--                android:gravity="center"-->
+<!--                android:paddingLeft="15dp"-->
+<!--                android:paddingRight="15dp"-->
+<!--                android:text="1"-->
+<!--                android:textAlignment="center"-->
+<!--                app:layout_constraintEnd_toStartOf="@+id/next_btn"-->
+<!--                tools:ignore="MissingConstraints" />-->
+
+<!--            <com.google.android.material.button.MaterialButton-->
+<!--                android:id="@+id/next_btn"-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:drawableTop="@drawable/ic_baseline_chevron_right_24"-->
+<!--                android:backgroundTint="@color/yellow"-->
+<!--                app:layout_constraintEnd_toEndOf="parent"-->
+<!--                app:layout_constraintHorizontal_bias="0.986"-->
+<!--                app:layout_constraintStart_toStartOf="parent"-->
+<!--                tools:ignore="MissingConstraints"-->
+<!--                tools:layout_editor_absoluteY="0dp" />-->
+
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/add_item_fab"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentBottom="true"
+                android:layout_margin="15dp"
+                android:backgroundTint="@color/yellow"
+                android:clickable="true"
+                android:focusable="true"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.954"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="1.0"
+                app:rippleColor="@color/white"
+                app:srcCompat="@android:drawable/ic_input_add"
+                app:tint="@color/white"
+                tools:ignore="MissingConstraints" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+    </LinearLayout>
 
 
 </FrameLayout>

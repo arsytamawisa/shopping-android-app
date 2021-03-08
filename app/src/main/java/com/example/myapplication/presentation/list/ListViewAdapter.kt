@@ -1,12 +1,12 @@
-package com.example.latihanframgent.list
+package com.example.myapplication.list
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.myapplication.R
-import com.example.myapplication.data.model.Item
-import com.example.myapplication.presentation.list.ListViewHolder
 import com.example.myapplication.presentation.listener.ItemClickListener
+import com.example.myapplication.data.model.Item
+
 
 class ListViewAdapter(private val itemClickListener: ItemClickListener) : RecyclerView.Adapter<ListViewHolder>() {
     var items = ArrayList<Item>()
